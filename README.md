@@ -25,5 +25,5 @@ The algorithm is very simple:
 
 [Come to the Dojo][2] and play with us!.
 
-[1] http://austincodedojo.github.com/2011/09/14/Meeting-Notes-September-14-2011.html "Meeting notes from the September 14 meeting."
-[2] http://austincodedojo.github.com "The Austin Code Dojo homepage"
+[1]: http://austincodedojo.github.com/2011/09/14/Meeting-Notes-September-14-2011.html "Meeting notes from the September 14 meeting."
+[2]: http://austincodedojo.github.com "The Austin Code Dojo homepage"
