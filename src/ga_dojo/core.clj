@@ -81,39 +81,36 @@
 (defn decode-chromosome [chromosome]
   (decode-reversed-chromosome (reverse (map decode-gene chromosome))))
 
-(defn first-is-number? [chromosome]
-  (number? (decode-gene (first chromosome))))
+(declare advance-to-next-number)
+(declare advance-to-next-op)
 
-(declare error-correct-chromosome-expecting-number)
-      
-(defn error-correct-chromosome-expecting-op [chromosome]
-  (condp = (decode-gene-type (first chromosome))
-    :number (error-correct-chromosome-expecting-op (next chromosome))
-    :op (cons (first chromosome) (error-correct-chromosome-expecting-number (next chromosome)))
-    :invalid (error-correct-chromosome-expecting-op (next chromosome))
-    nil))
-;  (cond 
-;        (< (count chromosome) 2) nil
-;        (nil? (decode-gene (first chromosome))) (error-correct-chromosome-expecting-op (next chromosome))
-;        (first-is-number? chromosome) (error-correct-chromosome-expecting-op (next chromosome))
-;        (= 0 (count (error-correct-chromosome-expecting-number (next chromosome)))) nil
-;    :default (cons (first chromosome) (error-correct-chromosome-expecting-number (next chromosome)))))
+(defn not-a-number [gene]
+  (not (= :number (decode-gene-type gene))))
 
+(defn not-an-op [gene]
+  (not (= :op (decode-gene-type gene))))
 
-;(defn error-correct-chromosome-expecting-op-and-number [chromosome]
-;  (let [new-chromosome (error-correct-chromosome-expecting-op chromosome)]
-;    (if (> 1 (count new-chromosome)) new-chromosome
-;      nil)))
+(defn advance-to-next-number [chromosome]
+  (cons advance-to-next-op (drop-while not-a-number chromosome)))
 
-(defn error-correct-chromosome-expecting-number [chromosome]
-  (condp = (decode-gene-type (first chromosome))
-    :number (cons (first chromosome) (error-correct-chromosome-expecting-op (next chromosome)))
-    :op (error-correct-chromosome-expecting-number (next chromosome))
-    :invalid (error-correct-chromosome-expecting-number (next chromosome))
-    nil))
+(defn advance-to-next-op [chromosome]
+  (cons advance-to-next-number (drop-while not-an-op chromosome)))
+
+(defn error-correct-chromosome-recursively [chromosome advance]
+  (if (= (count chromosome) 0) 
+    ()
+    (let [advance-result (apply advance [chromosome])
+          next-advance (first advance-result)
+          advanced-chromosome (next advance-result)
+         ]
+      (cons (first advanced-chromosome) (error-correct-chromosome-recursively (next advanced-chromosome) next-advance)))))
+
+(defn drop-trailing-operators [chromosome]
+  (reverse (drop-while not-a-number (reverse chromosome))))
 
 (defn error-correct-chromosome [chromosome]
-  (error-correct-chromosome-expecting-number chromosome))
+  (let [corrected-chromosome (error-correct-chromosome-recursively chromosome advance-to-next-number)]
+    (drop-trailing-operators corrected-chromosome)))
 
 (defn find-answer-for 
   "Run a genetic algorith searching for expressions that result in the number"
