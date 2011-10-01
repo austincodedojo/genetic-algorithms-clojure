@@ -54,22 +54,22 @@
       gene))
 
 (defn decode-gene-type [gene]
-      ({'("0" "0" "0" "0") 'number
-      '("0" "0" "0" "1") 'number
-      '("0" "0" "1" "0") 'number
-      '("0" "0" "1" "1") 'number
-      '("0" "1" "0" "0") 'number
-      '("0" "1" "0" "1") 'number
-      '("0" "1" "1" "0") 'number
-      '("0" "1" "1" "1") 'number
-      '("1" "0" "0" "0") 'number
-      '("1" "0" "0" "1") 'number
-      '("1" "0" "1" "0") 'op
-      '("1" "0" "1" "1") 'op
-      '("1" "1" "0" "0") 'op
-      '("1" "1" "0" "1") 'op
-      '("1" "1" "1" "0") 'invalid
-      '("1" "1" "1" "1") 'invalid}
+      ({'("0" "0" "0" "0") :number
+      '("0" "0" "0" "1") :number
+      '("0" "0" "1" "0") :number
+      '("0" "0" "1" "1") :number
+      '("0" "1" "0" "0") :number
+      '("0" "1" "0" "1") :number
+      '("0" "1" "1" "0") :number
+      '("0" "1" "1" "1") :number
+      '("1" "0" "0" "0") :number
+      '("1" "0" "0" "1") :number
+      '("1" "0" "1" "0") :op
+      '("1" "0" "1" "1") :op
+      '("1" "1" "0" "0") :op
+      '("1" "1" "0" "1") :op
+      '("1" "1" "1" "0") :invalid
+      '("1" "1" "1" "1") :invalid}
       gene))
 
 
@@ -88,9 +88,9 @@
       
 (defn error-correct-chromosome-expecting-op [chromosome]
   (condp = (decode-gene-type (first chromosome))
-    'number (error-correct-chromosome-expecting-op (next chromosome))
-    'op (cons (first chromosome) (error-correct-chromosome-expecting-number (next chromosome)))
-    'invalid (error-correct-chromosome-expecting-op (next chromosome))
+    :number (error-correct-chromosome-expecting-op (next chromosome))
+    :op (cons (first chromosome) (error-correct-chromosome-expecting-number (next chromosome)))
+    :invalid (error-correct-chromosome-expecting-op (next chromosome))
     nil))
 ;  (cond 
 ;        (< (count chromosome) 2) nil
@@ -107,9 +107,9 @@
 
 (defn error-correct-chromosome-expecting-number [chromosome]
   (condp = (decode-gene-type (first chromosome))
-    'number (cons (first chromosome) (error-correct-chromosome-expecting-op (next chromosome)))
-    'op (error-correct-chromosome-expecting-number (next chromosome))
-    'invalid (error-correct-chromosome-expecting-number (next chromosome))
+    :number (cons (first chromosome) (error-correct-chromosome-expecting-op (next chromosome)))
+    :op (error-correct-chromosome-expecting-number (next chromosome))
+    :invalid (error-correct-chromosome-expecting-number (next chromosome))
     nil))
 
 (defn error-correct-chromosome [chromosome]
