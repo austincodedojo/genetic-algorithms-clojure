@@ -97,16 +97,19 @@
   (cons advance-to-next-number (drop-while not-an-op chromosome)))
 
 (defn error-correct-chromosome-recursively [chromosome advance]
-  (if (= (count chromosome) 0) 
+  (if (empty? chromosome) 
     ()
     (let [advance-result (apply advance [chromosome])
           next-advance (first advance-result)
           advanced-chromosome (next advance-result)
          ]
+      ;(error-correct-chromosome-recursively (next advanced-chromosome) next-advance (conj result (first advanced-chromosome))))))
       (cons (first advanced-chromosome) (error-correct-chromosome-recursively (next advanced-chromosome) next-advance)))))
 
 (defn drop-trailing-operators [chromosome]
-  (reverse (drop-while not-a-number (reverse chromosome))))
+  (if (not-a-number (last chromosome))
+    (reverse (next (advance-to-next-number (reverse chromosome))))
+    chromosome))
 
 (defn error-correct-chromosome [chromosome]
   (let [corrected-chromosome (error-correct-chromosome-recursively chromosome advance-to-next-number)]
