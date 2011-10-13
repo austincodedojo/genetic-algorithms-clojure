@@ -1,23 +1,19 @@
 (ns ga-dojo.core)
 
 (defn evaluate-expression [symbols]
-  (defn classify [symbol]
-    (if (number? symbol) :digits :operators))
   (defn separate [symbols]
+    (defn classify [symbol]
+      (if (number? symbol) :digits :operators))
     (group-by classify symbols))
-  (defn legalize-expression [symbols]
-    (defn drop-trailing-operators [expression]
-      (reverse (drop-while #(= :operators (classify %)) (reverse expression))))
-    (let [separated-symbols (separate symbols)
-          legalish-expression (cons
-                                (first (separated-symbols :digits))
-                                (interleave (separated-symbols :operators) (next(separated-symbols :digits))))]
-      legalish-expression))
-  (defn infix-to-prefix [expression] 
-    (if (<= (count expression) 2)
-      (first expression)
-      (list (second expression) (infix-to-prefix (nnext expression)) (first expression)))) 
-  (eval (infix-to-prefix (reverse (legalize-expression symbols)))))
+  (defn calculate 
+    ([digits operators] (calculate (rest digits) operators (first digits)))
+    ([digits operators result]
+      (if (or (empty? digits) (empty? operators)) 
+        result
+        (recur (rest digits) (rest operators) ((first operators) (first digits) result)))))
+  (let [ separated-symbols (separate symbols) ]
+    (calculate (separated-symbols :digits) (separated-symbols :operators))))
+  
           
       
       
